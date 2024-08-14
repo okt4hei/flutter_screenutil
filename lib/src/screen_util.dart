@@ -139,8 +139,6 @@ class ScreenUtil {
             : Orientation.portrait);
 
     _instance
-      .._screenHeight = _instance._data.size.height
-      .._screenWidth = _instance._data.size.width
       ..fontSizeResolver = fontSizeResolver ?? _instance.fontSizeResolver
       .._minTextAdapt = minTextAdapt ?? _instance._minTextAdapt
       .._splitScreenMode = splitScreenMode ?? _instance._splitScreenMode
@@ -199,15 +197,11 @@ class ScreenUtil {
 
   /// 当前设备宽度 dp
   /// The horizontal extent of this size.
-  late double _screenWidth;
-  double get screenWidth => _screenWidth;
-  setScreenWidth(double value) => _screenWidth = value;
-  
+  double get screenWidth => _data.size.width;
+
   ///当前设备高度 dp
   ///The vertical extent of this size. dp
-  late double _screenHeight;
-  double get screenHeight => _screenHeight;
-  setScreenHeight(double value) => _screenHeight = value;
+  double get screenHeight => _data.size.height;
 
   /// 状态栏高度 dp 刘海屏会更高
   /// The offset from the top, in dp

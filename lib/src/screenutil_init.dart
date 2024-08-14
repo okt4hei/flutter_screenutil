@@ -79,6 +79,8 @@ class ScreenUtilInit extends StatefulWidget {
     this.responsiveWidgets,
     this.excludeWidgets,
     this.fontSizeResolver = FontSizeResolvers.width,
+    this.screenWidth,
+    this.screenHeight,
   }) : super(key: key);
 
   final ScreenUtilInitBuilder? builder;
@@ -96,6 +98,8 @@ class ScreenUtilInit extends StatefulWidget {
   final Size designSize;
   final Iterable<String>? responsiveWidgets;
   final Iterable<String>? excludeWidgets;
+  final double? screenWidth;
+  final double? screenHeight;
 
   @override
   State<ScreenUtilInit> createState() => _ScreenUtilInitState();
@@ -187,6 +191,8 @@ class _ScreenUtilInitState extends State<ScreenUtilInit> with WidgetsBindingObse
         splitScreenMode: widget.splitScreenMode,
         minTextAdapt: widget.minTextAdapt,
         fontSizeResolver: widget.fontSizeResolver,
+        screenWidth: widget.screenWidth,
+        screenHeight: widget.screenHeight,
       );
 
       return widget.builder?.call(context, widget.child) ?? widget.child!;

@@ -114,6 +114,8 @@ class ScreenUtil {
     bool? splitScreenMode,
     bool? minTextAdapt,
     FontSizeResolver? fontSizeResolver,
+    double? screenWidth,
+    double? screenHeight,
   }) {
     try {
       if (data != null)
@@ -139,6 +141,8 @@ class ScreenUtil {
             : Orientation.portrait);
 
     _instance
+      .._screenHeight = screenWidth ?? _instance._data.size.height
+      .._screenWidth = screenHeight ?? _instance._data.size.width
       ..fontSizeResolver = fontSizeResolver ?? _instance.fontSizeResolver
       .._minTextAdapt = minTextAdapt ?? _instance._minTextAdapt
       .._splitScreenMode = splitScreenMode ?? _instance._splitScreenMode
@@ -154,6 +158,8 @@ class ScreenUtil {
     bool splitScreenMode = false,
     bool minTextAdapt = false,
     FontSizeResolver? fontSizeResolver,
+    double? screenWidth,
+    double? screenHeight,
   }) {
     final view = View.maybeOf(context);
     return configure(
@@ -162,6 +168,8 @@ class ScreenUtil {
       splitScreenMode: splitScreenMode,
       minTextAdapt: minTextAdapt,
       fontSizeResolver: fontSizeResolver,
+      screenWidth: screenWidth,
+      screenHeight: screenHeight,
     );
   }
 
@@ -197,11 +205,13 @@ class ScreenUtil {
 
   /// 当前设备宽度 dp
   /// The horizontal extent of this size.
-  double get screenWidth => _data.size.width;
-
+  late double _screenWidth;
+  double get screenWidth => _screenWidth;
+  
   ///当前设备高度 dp
   ///The vertical extent of this size. dp
-  double get screenHeight => _data.size.height;
+  late double _screenHeight;
+  double get screenHeight => _screenHeight;
 
   /// 状态栏高度 dp 刘海屏会更高
   /// The offset from the top, in dp

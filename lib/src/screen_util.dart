@@ -141,8 +141,8 @@ class ScreenUtil {
             : Orientation.portrait);
 
     _instance
-      .._screenHeight = screenWidth ?? _instance._data.size.height
-      .._screenWidth = screenHeight ?? _instance._data.size.width
+      .._screenWidth = screenWidth ?? _instance._data.size.width
+      .._screenHeight = screenHeight ?? _instance._data.size.height
       ..fontSizeResolver = fontSizeResolver ?? _instance.fontSizeResolver
       .._minTextAdapt = minTextAdapt ?? _instance._minTextAdapt
       .._splitScreenMode = splitScreenMode ?? _instance._splitScreenMode

@@ -1,0 +1,87 @@
+name: Sync Fork with Upstream
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # バージョンタグがプッシュされた時にトリガー
+  workflow_dispatch: # 手動で実行可能
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Fork Repository
+      uses: actions/checkout@v2
+      with:
+        ref: master
+
+    - name: Set Upstream Repository
+      run: |
+        git remote add upstream https://github.com/OpenFlutter/flutter_screenutil.git
+        git remote -v
+
+    - name: Fetch Upstream
+      run: git fetch upstream
+
+    - name: Rebase Master onto Upstream
+      id: rebase
+      run: |
+        git rebase upstream/master || echo "::set-output name=conflict::true"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Push Rebased Master
+      if: steps.rebase.outputs.conflict != 'true'
+      run: |
+        git push origin master --force
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Delete Existing Conflict Resolution Branch
+      if: steps.rebase.outputs.conflict == 'true'
+      run: |
+        git push origin --delete rebase-conflict-resolution || echo "Branch does not exist"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create PR if Rebase Conflict
+      if: steps.rebase.outputs.conflict == 'true'
+      run: |
+        git rebase --abort
+        git checkout -b rebase-conflict-resolution upstream/master
+        git push origin rebase-conflict-resolution
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Checkout for-widgetbook for PR
+      if: steps.rebase.outputs.conflict == 'true'
+      uses: actions/checkout@v2
+      with:
+        ref: for-widgetbook
+
+    - name: Checkout master for PR
+      if: steps.rebase.outputs.conflict == 'true'
+      run: git checkout --track origin/master
+
+    - name: Update Base Branch
+      if: steps.rebase.outputs.conflict == 'true'
+      uses: peter-evans/create-pull-request@v5
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: "Resolve rebase conflict between master and upstream/master"
+        branch: master
+        base: rebase-conflict-resolution
+        title: "Resolve Rebase Conflict Between Master and Upstream"
+        body: "This pull request is created to resolve the rebase conflict between the master and upstream/master branches."
+    
+    - name: Create Pull Request
+      if: steps.rebase.outputs.conflict == 'true'
+      uses: peter-evans/create-pull-request@v5
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: "Merge for-widgetbook into master"
+        branch: for-widgetbook
+        base: master
+        title: "Resolve Rebase Conflict Between Master and Upstream"
+        body: "This pull request is created to resolve the rebase conflict between the master and upstream/master branches."
